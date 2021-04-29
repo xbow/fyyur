@@ -1,7 +1,7 @@
 from app import db
 
-# note: before initializing, I made these changes to the starter code:
-# 1. changed table names to lower case to make it easier to query them
+# note: before initializing alembic, I made these changes to the starter code:
+# 1. changed table names to lower case to make it easier to query them in psql
 
 class Venue(db.Model):
     __tablename__ = 'venue'
@@ -18,6 +18,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
+    shows = db.relationship('Show', backref='Venue', lazy=True)
 
 class Artist(db.Model):
     __tablename__ = 'artist'
@@ -33,6 +34,12 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
+    shows = db.relationship('Show', backref='Artist', lazy=True)
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+class Show(db.Model):
+    __tablename__ = 'show'
 
+    id = db.Column(db.Integer, primary_key=True)
+    artist_id = db.Column(db.Integer, db.ForeignKey(Artist.id), nullable=False)
+    venue_id = db.Column(db.Integer, db.ForeignKey(Venue.id), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
