@@ -221,6 +221,8 @@ def delete_venue(venue_id):
     error = True
     db.session.rollback()
     print(sys.exc_info())
+  finally:
+    db.session.close()
   if error:
     flash('An error occurred. Venue ' + venue_id + ' could not be deleted.')
     return render_template('pages/venues.html')
