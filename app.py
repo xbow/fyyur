@@ -89,17 +89,23 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+
+  term = request.form['search_term']
+  results = Venue.query.filter(Venue.name.ilike(f'%{term}%')).all()
+  
+  data = []
+  for venue in results:
+    data.append({
+      'id': venue.id,
+      'name': venue.name,
+      'num_upcoming_shows': Show.query.filter_by(venue_id=venue.id).filter(Show.start_time>datetime.now()).count()
+    })
+    
   response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
+    'count': len(results),
+    'data': data
   }
+
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
@@ -259,17 +265,22 @@ def artists():
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
-  # search for "band" should return "The Wild Sax Band".
+  term = request.form['search_term']
+  results = Artist.query.filter(Artist.name.ilike(f'%{term}%')).all()
+  
+  data = []
+  for artist in results:
+    data.append({
+      'id': artist.id,
+      'name': artist.name,
+      'num_upcoming_shows': Show.query.filter_by(artist_id=artist.id).filter(Show.start_time>datetime.now()).count()
+    })
+    
   response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
+    'count': len(results),
+    'data': data
   }
+
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/artists/<int:artist_id>')
