@@ -206,12 +206,30 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
 
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  venue = Venue.query.filter_by(id=venue_id)
+
+  if venue.count() == 0:
+    flash('No venue with id ' + venue_id + ' exists.')
+    return render_template('errors/404.html')
+
+  error = False
+  try:
+    venue.delete()
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  if error:
+    flash('An error occurred. Venue ' + venue_id + ' could not be deleted.')
+    return render_template('pages/venues.html')
+  else: 
+    # sadly, I could not find a way to get this url with the flash
+    # message to load after pressing the button on the venues page,
+    # but it works when sending a DELETE request in Postman.
+    flash('Venue ' + venue_id + ' was successfully deleted!')
+    return render_template('pages/venues.html')
 
 #  Artists
 #  ----------------------------------------------------------------

@@ -76,6 +76,16 @@
 </section>
 
 <a href="/venues/{{ venue.id }}/edit"><button class="btn btn-primary btn-lg">Edit</button></a>
+<button type="button" id="delete-venue" value={{venue.id}} class="btn btn-danger btn-lg">Delete</button></a>
+
+<script>
+  document.getElementById('delete-venue').addEventListener('click', (event) => {
+		const venueId = event.target.value
+    fetch('/venues/' + venueId, {
+      method: 'DELETE',
+    }).then(() => window.location.href = '/venues')
+	})
+</script>
 
 {% endblock %}
 
