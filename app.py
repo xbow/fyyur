@@ -483,7 +483,7 @@ def create_artist_submission():
       facebook_link = request.form['facebook_link'],
       genres = request.form.getlist('genres'),
       website = request.form['website_link'],
-      seeking_talent = True if request.form.get('seeking_venue') else False,
+      seeking_venue = True if request.form.get('seeking_venue') else False,
       seeking_description = request.form['seeking_description']
     )
     db.session.add(artist)
